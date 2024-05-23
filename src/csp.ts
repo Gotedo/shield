@@ -21,7 +21,7 @@ import { lodash } from '@poppinss/utils'
 /**
  * Directives to inspect for the `@nonce` keyword
  */
-const nonceDirectives = ['defaultSrc', 'scriptSrc', 'styleSrc']
+const nonceDirectives = ['defaultSrc', 'scriptSrc', 'styleSrc'] as const
 
 /**
  * Reads `nonce` from the ServerResponse and returns appropriate
@@ -64,16 +64,27 @@ export function cspFactory(options: UserCspOptions, ctx: HttpContextContract) {
 
   if (options.directives) {
     cspOptions['directives'] = {}
+    const directivesMap = options.directives(ctx)
 
     /**
      * Transform directives that may contain the
      * "@nonce" directive.
      */
     nonceDirectives.forEach((directive) => {
-      if (options.directives?.(ctx)?.[directive]) {
-        cspOptions.directives![directive] = transformNonceKeywords(
-          options.directives!(ctx)![directive]
-        )
+      if (directivesMap?.[directive]) {
+        cspOptions.directives![directive] = transformNonceKeywords(directivesMap![directive])
+      }
+    })
+    /**
+     * Process other directives
+     */
+    const otherDirectives = Object.keys(directivesMap ?? {}).filter(
+      // @ts-expect-error
+      (directive) => !nonceDirectives.includes(directive)
+    )
+    otherDirectives.forEach((directive) => {
+      if (directivesMap?.[directive]) {
+        cspOptions.directives![directive] = directivesMap![directive]
       }
     })
   }
