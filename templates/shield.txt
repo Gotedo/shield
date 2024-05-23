@@ -38,9 +38,9 @@ export const csp: ShieldConfig['csp'] = {
   | https://content-security-policy.com
   |
   | @example
-  | directives: {
+  | directives: (ctx: HttpContextContract) => ({
   |   defaultSrc: ["'self'", '@nonce', 'cdnjs.cloudflare.com']
-  | }
+  | })
   |
   */
   directives: {
@@ -119,6 +119,14 @@ export const csrf: ShieldConfig['csrf'] = {
   |
   */
   methods: ['POST', 'PUT', 'PATCH', 'DELETE'],
+  cookieOptions: (ctx: HttpContextContract) => ({
+    domain: '.gotedo.com',
+    path: '/',
+    maxAge: '2h',
+    httpOnly: true,
+    secure: true,
+    sameSite: undefined,
+  }),
 }
 
 /*

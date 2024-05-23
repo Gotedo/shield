@@ -58,6 +58,16 @@ declare module '@ioc:Adonis/Addons/Shield' {
   export type CspOptions = { enabled: boolean } & ContentSecurityPolicyOptions
 
   /**
+   * User-facing config for working with CSP
+   */
+  export type UserCspOptions = { enabled: boolean } & Omit<
+    ContentSecurityPolicyOptions,
+    'directives'
+  > & {
+      directives?: (ctx: HttpContextContract) => ContentSecurityPolicyOptions['directives']
+    }
+
+  /**
    * Config for working with CSRF options
    */
   export type CsrfOptions = {
@@ -65,7 +75,7 @@ declare module '@ioc:Adonis/Addons/Shield' {
     exceptRoutes?: string[] | ((ctx: HttpContextContract) => boolean)
     enableXsrfCookie?: boolean
     methods?: ReadonlyArray<string>
-    cookieOptions?: Partial<CookieOptions>
+    cookieOptions?: (ctx: HttpContextContract) => Partial<CookieOptions>
   }
 
   /**
@@ -76,7 +86,7 @@ declare module '@ioc:Adonis/Addons/Shield' {
     contentTypeSniffing: ContentTypeSniffingOptions
     hsts: HstsOptions
     dnsPrefetch: DnsPrefetchOptions
-    csp: CspOptions
+    csp: UserCspOptions
     csrf: CsrfOptions
   }
 

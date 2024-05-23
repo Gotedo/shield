@@ -192,7 +192,7 @@ export class Csrf {
      * Set it as a cookie
      */
     if (this.options.enableXsrfCookie) {
-      const cookieOptions = Object.assign({}, this.options.cookieOptions, {
+      const cookieOptions = Object.assign({}, this.options.cookieOptions?.(ctx), {
         httpOnly: false,
       })
       ctx.response.encryptedCookie('XSRF-TOKEN', ctx.request.csrfToken, cookieOptions)

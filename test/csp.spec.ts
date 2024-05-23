@@ -18,8 +18,8 @@ test.group('Csp', (group) => {
 
   test('return noop function when enabled is false', async ({ assert }) => {
     const app = await setup()
-    const csp = cspFactory({ enabled: false })
     const ctx = app.container.use('Adonis/Core/HttpContext').create('/', {})
+    const csp = cspFactory({ enabled: false }, ctx)
     csp(ctx)
 
     assert.isUndefined(ctx.response.getHeader('Content-Security-Policy'))
@@ -29,12 +29,15 @@ test.group('Csp', (group) => {
     const app = await setup()
     const ctx = app.container.use('Adonis/Core/HttpContext').create('/', {})
 
-    const csp = cspFactory({
-      enabled: true,
-      directives: {
-        defaultSrc: ["'self'"],
+    const csp = cspFactory(
+      {
+        enabled: true,
+        directives: () => ({
+          defaultSrc: ["'self'"],
+        }),
       },
-    })
+      ctx
+    )
 
     csp(ctx)
 
@@ -45,13 +48,16 @@ test.group('Csp', (group) => {
     const app = await setup()
     const ctx = app.container.use('Adonis/Core/HttpContext').create('/', {})
 
-    const csp = cspFactory({
-      enabled: true,
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ['@nonce'],
+    const csp = cspFactory(
+      {
+        enabled: true,
+        directives: () => ({
+          defaultSrc: ["'self'"],
+          scriptSrc: ['@nonce'],
+        }),
       },
-    })
+      ctx
+    )
 
     csp(ctx)
     assert.equal(
@@ -64,13 +70,16 @@ test.group('Csp', (group) => {
     const app = await setup()
     const ctx = app.container.use('Adonis/Core/HttpContext').create('/', {})
 
-    const csp = cspFactory({
-      enabled: true,
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ['@nonce'],
+    const csp = cspFactory(
+      {
+        enabled: true,
+        directives: () => ({
+          defaultSrc: ["'self'"],
+          styleSrc: ['@nonce'],
+        }),
       },
-    })
+      ctx
+    )
 
     csp(ctx)
     assert.equal(
@@ -83,12 +92,15 @@ test.group('Csp', (group) => {
     const app = await setup()
     const ctx = app.container.use('Adonis/Core/HttpContext').create('/', {})
 
-    const csp = cspFactory({
-      enabled: true,
-      directives: {
-        defaultSrc: ["'self'", '@nonce'],
+    const csp = cspFactory(
+      {
+        enabled: true,
+        directives: () => ({
+          defaultSrc: ["'self'", '@nonce'],
+        }),
       },
-    })
+      ctx
+    )
 
     csp(ctx)
     assert.equal(

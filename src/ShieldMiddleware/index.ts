@@ -32,14 +32,16 @@ export class ShieldMiddleware {
   /**
    * Actions to be performed
    */
-  private actions = [
-    shield.csrfFactory(this.config.csrf || {}, this.encryption, this.view),
-    shield.cspFactory(this.config.csp || {}),
-    shield.dnsPrefetchFactory(this.config.dnsPrefetch || {}),
-    shield.frameGuardFactory(this.config.xFrame || {}),
-    shield.hstsFactory(this.config.hsts || {}),
-    shield.noSniffFactory(this.config.contentTypeSniffing || {}),
-  ]
+  private actions(ctx: HttpContextContract) {
+    return [
+      shield.csrfFactory(this.config.csrf || {}, this.encryption, this.view),
+      shield.cspFactory(this.config.csp || {}, ctx),
+      shield.dnsPrefetchFactory(this.config.dnsPrefetch || {}),
+      shield.frameGuardFactory(this.config.xFrame || {}),
+      shield.hstsFactory(this.config.hsts || {}),
+      shield.noSniffFactory(this.config.contentTypeSniffing || {}),
+    ]
+  }
 
   constructor(private application: ApplicationContract) {}
 
@@ -47,7 +49,7 @@ export class ShieldMiddleware {
    * Handle request
    */
   public async handle(ctx: HttpContextContract, next: () => Promise<void>) {
-    for (let action of this.actions) {
+    for (let action of this.actions(ctx)) {
       await action(ctx)
     }
 
