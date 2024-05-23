@@ -1,6 +1,6 @@
 {
   "name": "@gotedo/shield",
-  "version": "7.2.1",
+  "version": "7.2.2",
   "description": "A middleware for AdonisJS to keep web applications secure from common web attacks",
   "main": "build/providers/ShieldProvider.js",
   "files": [
